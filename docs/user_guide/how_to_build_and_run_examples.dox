@@ -493,19 +493,20 @@ Build validation and benchmarking:
 
 	bazel build //tests:all
 
-@subsection S1_8_2_cmake_build CMake build
+@subsection S1_8_2_cmake_build CMake RE build
 
 @subsubsection S1_8_2_1_file_structure File structure
 
-File structure for all files included in the CMake build:
+File structure for all files included in the CMake RE build:
 
 	.
 	├──  CMakeLists.txt
 	├── cmake
 	│   ├── Options.cmake
-	│   ├── Version.cmake
-	│   └── toolchains
-	│       └── aarch64_linux_toolchain.cmake
+	│   └── Version.cmake
+	├── environments
+	│   ├── linux-ubuntu-2404-aarch64-linux-gnu.pkr.js
+	│   └── linux-ubuntu-2404-aarch64-linux-gnu.cmake
 	├── examples
 	│   └── CMakeLists.txt
 	├── src
@@ -538,6 +539,15 @@ To build libraries, examples and tests:
 
 	cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DARM_COMPUTE_ENABLE_OPENMP=1 -DARM_COMPUTE_BUILD_EXAMPLES=1 -DARM_COMPUTE_BUILD_TESTING=1
 	cmake --build build -j32
+
+If you want to speed-up the build you can run it accelerated with remote
+execution and caching with a RE-API build cluster (CMAKE_TOOLCHAIN_FILE 
+is mandatory to specify the environments in which the builds will be
+distributed, read more in the [cmake-re environments documentation](https://tipi.build/documentation/0400-environments)):
+
+  export RBE_service=<engflow-rbe-cluster>:443
+	cmake-re -S . -B build -DCMAKE_TOOLCHAIN_FILE=environments/linux-ubuntu-2404-aarch64-linux-gnu.cmake
+	cmake-re --build build -j500 --distributed
 
 @section S1_9_fixed_format Building with support for fixed format kernels
 
