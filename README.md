@@ -90,6 +90,26 @@ Pre-build binaries are generated with the following security / good coding pract
 
 [docs-howtobuild]: https://artificial-intelligence.sites.arm.com/computelibrary/latest/how_to_build.xhtml
 
+### Run a CMake `--distributed` build with caching and remote execution on an RBE cluster 
+Fast cached and distributed builds can be made through the use of `cmake-re` :
+
+```bash
+# Authenticate
+export RBE_service=<re-cluster-address>:443
+export RBE_tls_client_auth_key=$HOME/engflow-mTLS/engflow.key
+export RBE_tls_client_auth_cert=$HOME/engflow-mTLS/engflow.crt
+
+export TIPI_CACHE_CONSUME_ONLY=ON # Disable TIPI additional cache layers
+
+cmake-re -S . -B build/aarch64-re -DCMAKE_TOOLCHAIN_FILE=environments/linux-ubuntu-2404-aarch64-linux-gnu.cmake
+cmake-re  --distributed --build build/aarch64-re -j500
+``` 
+
+When remote execution is not wished, and only remote caching is wanted one can set the environment variable :
+  * `RBE_exec_strategy=local`
+
+Usage & Details on the [`cmake-re` documentation](https://tipi.build/documentation/0352-distributed-builds)
+
 <br>
 
 ## How to contribute
